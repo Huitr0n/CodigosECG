@@ -38,7 +38,6 @@
       pointer-events: none; z-index: 0;
     }
 
-    /* ── Header ──────────────────────────────────────────── */
     header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 1rem 2rem;
@@ -71,7 +70,6 @@
 
     @keyframes blink { 50% { opacity: .3; } }
 
-    /* ── Layout ──────────────────────────────────────────── */
     main {
       position: relative; z-index: 1;
       max-width: 1200px; margin: 0 auto;
@@ -79,7 +77,6 @@
       display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem;
     }
 
-    /* ── ECG panel ─────────────────────────────────────── */
     .ecg-panel {
       background: var(--panel); border: 1px solid var(--border);
       border-radius: 16px; padding: 1.25rem;
@@ -101,10 +98,8 @@
       font-size: .78rem; color: var(--dim);
     }
 
-    /* ── Side panel ─────────────────────────────────────── */
     .side-panel { display: flex; flex-direction: column; gap: 1.25rem; }
 
-    /* ── BPM card ──────────────────────────────────────── */
     .bpm-card {
       background: var(--panel); border: 1px solid var(--border);
       border-radius: 16px; padding: 1.5rem; text-align: center;
@@ -181,7 +176,6 @@
     .zone-warning .zone-label { background: rgba(255,234,0,.15);  color: var(--yellow); }
     .zone-danger  .zone-label { background: rgba(255,23,68,.15);  color: var(--red);    }
 
-    /* ── Alert banner ─────────────────────────────────── */
     .alert-banner {
       border-radius: 12px; padding: 1rem 1.2rem; font-size: .85rem;
       display: none; gap: .6rem; align-items: flex-start;
@@ -196,7 +190,6 @@
     .alert-banner.warning { background: rgba(255,234,0,.08);  border-color: rgba(255,234,0,.3);  color: var(--yellow); }
     .alert-banner.danger  { background: rgba(255,23,68,.08);  border-color: rgba(255,23,68,.3);  color: var(--red);    }
 
-    /* ── Zones legend ─────────────────────────────────── */
     .zones-card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; }
     .zone-row { display: flex; align-items: center; gap: .75rem; padding: .6rem 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
     .zone-row:last-child { border-bottom: none; }
@@ -207,30 +200,25 @@
     .z-red    { background: var(--red);    box-shadow: 0 0 6px var(--red);    }
     .zone-range { margin-left: auto; color: var(--dim); font-size: .78rem; }
 
-    /* ── Stats ─────────────────────────────────────────── */
     .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; text-align: center; }
     .stat-label { font-size: .7rem; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; }
     .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: .2rem; }
     .stat-unit  { font-size: .7rem; color: var(--dim); }
 
-    /* ── Demo notice ─────────────────────────────────── */
     .demo-notice {
       text-align: center; padding: .5rem; font-size: .75rem;
       color: var(--dim); background: rgba(255,234,0,.06);
       border: 1px dashed rgba(255,234,0,.2); border-radius: 8px;
     }
 
-    /* ── Particle canvases ────────────────────────────── */
     #particle-canvas, #ice-canvas {
       position: fixed; inset: 0; pointer-events: none; z-index: 0;
       opacity: 0; transition: opacity .6s;
     }
     #particle-canvas.active, #ice-canvas.active { opacity: 1; }
 
-    /* ═════════════════════════════════════════════════
-       MODAL — sistema de tabs WiFi / Bluetooth
-    ═════════════════════════════════════════════════ */
+ 
     .modal-bg {
       position: fixed; inset: 0; background: rgba(0,0,0,.7);
       backdrop-filter: blur(4px);
@@ -426,9 +414,7 @@
   </div>
 </main>
 
-<!-- ═══════════════════════════════════════
-     MODAL DUAL CONEXIÓN
-═══════════════════════════════════════ -->
+
 <div class="modal-bg" id="modal">
   <div class="modal">
     <h2>Conectar ESP32</h2>
@@ -514,9 +500,7 @@
 </div><!-- /modal-bg -->
 
 <script>
-/* ═══════════════════════════════════════════
-   STATE GLOBAL
-═══════════════════════════════════════════ */
+
 let demoInterval  = null;
 let isDemo        = false;
 let wsConn        = null;   // WebSocket activo
@@ -530,9 +514,7 @@ let currentZone  = 'none';
 let alarmActive  = false;
 let bradyActive  = false;
 
-/* ═══════════════════════════════════════════
-   HELPERS UI
-═══════════════════════════════════════════ */
+
 function setConnState(state, label) {
   // state: 'connected' | 'connecting' | 'disconnected'
   const dot = document.getElementById('conn-dot');
@@ -541,9 +523,6 @@ function setConnState(state, label) {
   txt.textContent = label;
 }
 
-/* ═══════════════════════════════════════════
-   PACKET HANDLER (común a WiFi y BT)
-═══════════════════════════════════════════ */
 function handlePacket(d, updateTime = true) {
   if (d.filtered !== undefined) {
     const norm = ((d.filtered / 4095.0) - 0.5) * 2.0;
@@ -559,9 +538,6 @@ function handlePacket(d, updateTime = true) {
   if (updateTime) document.getElementById('timestamp').textContent = new Date().toLocaleTimeString();
 }
 
-/* ═══════════════════════════════════════════
-   ECG CANVAS
-═══════════════════════════════════════════ */
 const canvas = document.getElementById('ecg-canvas');
 const ctx    = canvas.getContext('2d');
 
@@ -630,9 +606,6 @@ function hexAlpha(hex, a) {
   return `rgba(${r},${g},${b},${a})`;
 }
 
-/* ═══════════════════════════════════════════
-   BPM + STATS + ZONE
-═══════════════════════════════════════════ */
 function updateBPM(bpm) {
   bpm = Math.round(bpm);
   document.getElementById('bpm-display').textContent = bpm;
@@ -703,9 +676,6 @@ function updateZone(bpm) {
   document.querySelector('.bpm-card').style.setProperty('--bpm-interval', `${interval}s`);
 }
 
-/* ═══════════════════════════════════════════
-   AUDIO
-═══════════════════════════════════════════ */
 let audioCtx = null;
 function getAC() { if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
 function playTone(freq, gain, type, duration) {
@@ -735,9 +705,7 @@ function playAlarm() {
   fire();
 }
 
-/* ═══════════════════════════════════════════
-   DEMO MODE
-═══════════════════════════════════════════ */
+
 let demoBPM=45, demoBeatPos=0;
 function ecgShape(t) {
   const p=Math.exp(-((t-.15)**2)/.001)*.15, q=Math.exp(-((t-.32)**2)/.0003)*-.1,
@@ -769,9 +737,6 @@ function startDemo() {
 }
 function stopDemo() { if (demoInterval){ clearInterval(demoInterval); demoInterval=null; } isDemo=false; }
 
-/* ═══════════════════════════════════════════
-   PARTICLES — fire (red zone)
-═══════════════════════════════════════════ */
 const pc=document.getElementById('particle-canvas'), pctx=pc.getContext('2d');
 function resizePC(){ pc.width=innerWidth; pc.height=innerHeight; }
 resizePC(); window.addEventListener('resize',resizePC);
@@ -791,9 +756,6 @@ function animFire(){
 }
 animFire();
 
-/* ═══════════════════════════════════════════
-   ICE PARTICLES — brady zone
-═══════════════════════════════════════════ */
 const ic=document.getElementById('ice-canvas'), ictx=ic.getContext('2d');
 function resizeIC(){ ic.width=innerWidth; ic.height=innerHeight; }
 resizeIC(); window.addEventListener('resize',resizeIC);
@@ -817,9 +779,6 @@ function animIce(){
 }
 animIce();
 
-/* ═══════════════════════════════════════════
-   MODAL helpers
-═══════════════════════════════════════════ */
 function openModal()  { document.getElementById('modal').classList.remove('hidden'); }
 function closeModal() { document.getElementById('modal').classList.add('hidden'); }
 
@@ -839,9 +798,6 @@ function switchBtMode(mode) {
   });
 }
 
-/* ═══════════════════════════════════════════
-   WIFI — WebSocket directo al ESP32 (puerto 81)
-═══════════════════════════════════════════ */
 function connectWifi() {
   const ip   = document.getElementById('ip-input').value.trim();
   const port = document.getElementById('port-input').value.trim() || '81';
@@ -884,11 +840,6 @@ function connectWifi() {
   };
 }
 
-/* ═══════════════════════════════════════════
-   BLUETOOTH SERIAL — Web Serial API
-   El ESP32 envía tramas de 3 bytes: [0xFF, bpmLo, bpmHi]
-   También parsea JSON si el byte no es 0xFF
-═══════════════════════════════════════════ */
 async function scanSerial() {
   const st   = document.getElementById('serial-status');
   const list = document.getElementById('serial-list');
@@ -902,7 +853,6 @@ async function scanSerial() {
   list.innerHTML = '';
 
   try {
-    // El navegador abre el selector nativo — mostramos el resultado
     const port = await navigator.serial.requestPort();
     const info = port.getInfo();
     list.innerHTML = '';
@@ -910,7 +860,6 @@ async function scanSerial() {
     el.className = 'scan-item';
     el.innerHTML = `<span class="dev-name">ESP32_ECG</span>
                     <span class="dev-addr">VID:${info.usbVendorId ?? '–'} PID:${info.usbProductId ?? '–'}</span>`;
-    // Guardar referencia en el elemento para usarla al conectar
     el._port = port;
     el.onclick = () => {
       el._selected = true;
@@ -940,7 +889,6 @@ async function connectSerial() {
     return;
   }
 
-  // Intentar usar el puerto ya seleccionado, o pedir uno nuevo
   let port = scanSerial._selectedPort;
   if (!port) {
     try { port = await navigator.serial.requestPort(); }
@@ -962,7 +910,6 @@ async function connectSerial() {
   st.textContent = '✓ Conectado';
   setTimeout(closeModal, 700);
 
-  // Leer bytes en segundo plano
   readSerialLoop(port);
 }
 
@@ -1102,9 +1049,7 @@ async function connectBLE() {
   }
 }
 
-/* ═══════════════════════════════════════════
-   DESCONECTAR TODO
-═══════════════════════════════════════════ */
+
 async function disconnectAll() {
   stopDemo();
 
@@ -1124,7 +1069,7 @@ async function disconnectAll() {
   closeModal();
 }
 
-/* Abrir modal al cargar */
+
 window.addEventListener('load', openModal);
 </script>
 </body>
